@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Car Accessories</title>
+    <link rel="stylesheet" href="../css/global.css">
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            text-align: left;
+            padding: 8px;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .add-button, .delete-button {
+            margin-top: 10px;
+            width: 200px;
+            border-radius: 6px;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Car Accessories</h1>
+ 
+    <h3>Add Accessory</h3>
+    <select id="accessory-select">
+        <option value="10">Car Cover</option>
+        <option value="20">Seat Covers</option>
+        <option value="30">Phone Holder</option>
+        <!-- Add more options here -->
+    </select>
+    <input type="number" id="amount-input" min="1" value="1">
+    <button class="add-button" id="add-button">Add</button>
+ 
+    <h2>Product List</h2>
+    <table id="product-list">
+        <tr>
+            <th>Accessory</th>
+            <th>Amount</th>
+            <th>Price</th>
+            <th>Action</th>
+        </tr>
+    </table>
+    
+    <h3>Total Price: <span id="total-price">$0</span></h3>
+    <h3>Tax: <span id="tax">$0</span></h3>
+    <h3>Total After Tax: <span id="totalTax">$0</span></h3>
+    
+    <script>
+        $(document).ready(function() {
+            $('#add-button').click(function() {
+                var selectedAccessory = $('#accessory-select option:selected').text();
+                var selectedAccessoryValue = $('#accessory-select').val();
+                var amount = $('#amount-input').val();
+                var price = parseFloat(selectedAccessoryValue);
+                var totalPrice = $('#total-price');
+                var productTable = $('#product-list');
+                var tax = $('#tax');
+                var totalTax = $('#totalTax');
+
+                var tPrice = price * amount;
+                var tTax = tPrice * 0.07;
+                var total_after_tax = tPrice + tTax;
+
+                var newRow = $('<tr>');
+                newRow.append('<td>' + selectedAccessory + '</td>');
+                newRow.append('<td>' + amount + '</td>');
+                newRow.append('<td>$' + tPrice.toFixed(2) + '</td>');
+                newRow.append('<td><button class="delete-button">Delete</button></td>');
+
+                productTable.append(newRow);
+
+                totalPrice.text('$' + (parseFloat(totalPrice.text().substring(1)) + tPrice).toFixed(2));
+                tax.text('$' + (parseFloat(tax.text().substring(1)) + tTax).toFixed(2));
+                totalTax.text('$' + (parseFloat(totalTax.text().substring(1)) + total_after_tax).toFixed(2));
+
+                // Delete button functionality
+                newRow.find('.delete-button').click(function() {
+                    var row = $(this).closest('tr');
+                    var rowPrice = parseFloat(row.find('td').eq(2).text().substring(1));
+                    var rowTax = rowPrice * 0.07;
+                    var rowTotalAfterTax = rowPrice + rowTax;
+
+                    totalPrice.text('$' + (parseFloat(totalPrice.text().substring(1)) - rowPrice).toFixed(2));
+                    tax.text('$' + (parseFloat(tax.text().substring(1)) - rowTax).toFixed(2));
+                    totalTax.text('$' + (parseFloat(totalTax.text().substring(1)) - rowTotalAfterTax).toFixed(2));
+
+                    row.remove();
+                });
+            });
+        });
+    </script>
+</body>
+</html>
